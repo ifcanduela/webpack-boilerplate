@@ -4,7 +4,7 @@ Compiles and bundles Javascript and CSS files.
 
 ## How do I g-?
 
-Clone the repo, cd into it and run `npm install` or `yarn install`.
+Clone the repo, cd into it and run `npm install`.
 
 ## And then what sho-?
 
@@ -14,7 +14,7 @@ Run `npm run watch` for development or `npm run prod` for production.
 ## But does it comp-?
 
 The Webpack config includes settings for JavaScript (including Vue single-file
-components), LessCSS and image and font files. The results will be put in a
+components), LessCSS, images and fonts. The results will be put in a
 `dist` folder.
 
 ## Can I change th-?
