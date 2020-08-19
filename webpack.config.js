@@ -23,7 +23,7 @@ module.exports = function (env = {}, argv = {}) {
 
         output: {
             path: DEST_FOLDER,
-            filename: "js/[name].bundle.js",
+            filename: "js/[name].js",
         },
 
         mode: MODE,
@@ -65,16 +65,10 @@ module.exports = function (env = {}, argv = {}) {
                         {
                             loader: MiniCssExtractPlugin.loader,
                             options: {
-                                sourceMap: IS_DEV,
                                 publicPath: "../",
                             },
                         },
-                        {
-                            loader: "css-loader",
-                            options: {
-                                sourceMap: IS_DEV,
-                            },
-                        },
+                        "css-loader",
                         {
                             loader: "postcss-loader",
                             options: {
@@ -85,13 +79,7 @@ module.exports = function (env = {}, argv = {}) {
                                 ].filter(p => p !== null),
                             },
                         },
-                        {
-                            loader: "less-loader",
-                            options: {
-                                sourceMap: IS_DEV,
-                                strictMath: true,
-                            },
-                        },
+                        "less-loader",
                     ],
                 },
                 {
@@ -123,9 +111,9 @@ module.exports = function (env = {}, argv = {}) {
 
             new CleanWebpackPlugin({cleanStaleWebpackAssets: false}),
 
-            new CopyWebpackPlugin([
-                // {from: "./assets/img/icons", to: "img/icons
-            ], {}),
+            // new CopyWebpackPlugin({patterns: [
+            //     {from: "./assets/img/icons", to: "img/icons"},
+            // ]),
 
             new FriendlyErrorsWebpackPlugin(),
 
@@ -142,7 +130,7 @@ module.exports = function (env = {}, argv = {}) {
             // new LiveReloadPlugin({port: 44444}),
 
             new MiniCssExtractPlugin({
-                filename: "css/app.bundle.css",
+                filename: "css/app.css",
             }),
 
             new VueLoaderPlugin(),
