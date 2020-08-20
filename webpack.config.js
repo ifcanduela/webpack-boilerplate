@@ -89,6 +89,7 @@ module.exports = function (env = {}, argv = {}) {
                         limit: 8192,
                         fallback: "file-loader",
                         name: "img/[name].[ext]",
+                        esModule: false,
                     },
                 },
                 {
@@ -98,6 +99,7 @@ module.exports = function (env = {}, argv = {}) {
                         limit: 8192,
                         fallback: "file-loader",
                         name: "fonts/[name].[ext]",
+                        esModule: false,
                     },
                 },
             ],
