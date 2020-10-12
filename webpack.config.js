@@ -32,10 +32,10 @@ module.exports = function (env = {}, argv = {}) {
         stats: "none",
 
         optimization: {
-            // splitChunks: {
-            //     chunks: "initial",
-            //     name: "lib",
-            // },
+            splitChunks: {
+                chunks: "initial",
+                name: "lib",
+            },
         },
 
         resolve: {
@@ -73,10 +73,12 @@ module.exports = function (env = {}, argv = {}) {
                             loader: "postcss-loader",
                             options: {
                                 sourceMap: IS_DEV,
-                                plugins: () => [
-                                    require("autoprefixer")(),
-                                    IS_DEV ? require("cssnano")() : null,
-                                ].filter(p => p !== null),
+                                postcssOptions: {
+                                    plugins: [
+                                        "autoprefixer",
+                                        "cssnano",
+                                    ],
+                                }
                             },
                         },
                         "less-loader",
@@ -113,9 +115,11 @@ module.exports = function (env = {}, argv = {}) {
 
             new CleanWebpackPlugin({cleanStaleWebpackAssets: false}),
 
-            // new CopyWebpackPlugin({patterns: [
-            //     {from: "./assets/img/icons", to: "img/icons"},
-            // ]),
+            // new CopyWebpackPlugin({
+            //     patterns: [
+            //         {from: "./assets/img/icons", to: "img/icons"},
+            //     ]
+            // }),
 
             new FriendlyErrorsWebpackPlugin(),
 
