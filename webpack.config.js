@@ -9,12 +9,10 @@ const LiveReloadPlugin = require("webpack-livereload-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 
-module.exports = function (env = {}, argv = {}) {
+module.exports = (env, argv) => {
     const DEST_FOLDER = path.resolve(__dirname, "dist");
     const PROJECT_NAME = path.basename(__dirname);
-
-    const MODE = env.mode || argv.mode || "development";
-    const IS_DEV = MODE === "development";
+    const MODE = argv.mode || "production";
 
     return {
         entry: {
@@ -26,9 +24,8 @@ module.exports = function (env = {}, argv = {}) {
             filename: "js/[name].js",
         },
 
-        mode: MODE,
         performance: { hints: false, },
-        devtool: IS_DEV ? "source-map" : false,
+        devtool: MODE === "production" ? false : "source-map",
         stats: "none",
 
         optimization: {
@@ -72,7 +69,6 @@ module.exports = function (env = {}, argv = {}) {
                         {
                             loader: "postcss-loader",
                             options: {
-                                sourceMap: IS_DEV,
                                 postcssOptions: {
                                     plugins: [
                                         "autoprefixer",
@@ -125,7 +121,7 @@ module.exports = function (env = {}, argv = {}) {
 
             new ImageminPlugin({
                 test: /\.(jpe?g|png|gif|svg)$/i,
-                disable: IS_DEV,
+                disable: MODE !== "production",
             }),
 
             /*
