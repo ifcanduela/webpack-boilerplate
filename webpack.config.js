@@ -7,20 +7,22 @@ const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
 const ImageminPlugin = require("imagemin-webpack-plugin").default;
 const LiveReloadPlugin = require("webpack-livereload-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const VueLoaderPlugin = require("vue-loader/lib/plugin");
+const VueLoaderPlugin = require("vue-loader").VueLoaderPlugin;
+const WebpackManifestPlugin = require("webpack-manifest-plugin").WebpackManifestPlugin;
 
 module.exports = (env, argv) => {
-    const DEST_FOLDER = path.resolve(__dirname, "dist");
+    const PUBLIC_PATH = "dist/";
+    const OUTPUT_PATH = path.resolve(__dirname, PUBLIC_PATH);
     const PROJECT_NAME = path.basename(__dirname);
     const MODE = argv.mode || "production";
 
     return {
         entry: {
-            app: "./src/index.js",
+            app: "./src/main.js",
         },
 
         output: {
-            path: DEST_FOLDER,
+            path: OUTPUT_PATH,
             filename: "js/[name].js",
         },
 
@@ -37,6 +39,7 @@ module.exports = (env, argv) => {
 
         resolve: {
             alias: {
+                "@": path.resolve(__dirname, "src"),
                 "vue$": "vue/dist/vue.esm.js",
             },
             extensions: [".wasm", ".mjs", ".js", ".json", ".vue"],
@@ -81,7 +84,7 @@ module.exports = (env, argv) => {
                     ],
                 },
                 {
-                    test: /\.(jpe?g|png|gif|svg)$/i,
+                    test: /\.(jpe?g|png|gif)$/i,
                     loader: "url-loader",
                     options: {
                         limit: 8192,
@@ -91,14 +94,26 @@ module.exports = (env, argv) => {
                     },
                 },
                 {
-                    test: /\.(ttf|woff2?|eot|otf)$/i,
-                    loader: "url-loader",
-                    options: {
-                        limit: 8192,
-                        fallback: "file-loader",
-                        name: "fonts/[name].[ext]",
-                        esModule: false,
-                    },
+                    test: /\.svg$/,
+                    oneOf: [
+                        {
+                            resourceQuery: /inline/,
+                            use: ["babel-loader", "vue-svg-loader"],
+                        },
+                        {
+                            loader: "url-loader",
+                            options: {
+                                limit: 8192,
+                                fallback: "file-loader",
+                                name: "img/[name].[ext]",
+                                esModule: false,
+                            },
+                        },
+                    ],
+                },
+                {
+                    test: /\.(woff|woff2|eot|ttf|otf)$/i,
+                    type: "asset/resource",
                 },
             ],
         },
@@ -136,6 +151,10 @@ module.exports = (env, argv) => {
             }),
 
             new VueLoaderPlugin(),
+
+            new WebpackManifestPlugin({
+                publicPath: PUBLIC_PATH,
+            }),
         ],
     };
 };
