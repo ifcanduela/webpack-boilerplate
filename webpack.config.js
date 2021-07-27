@@ -3,7 +3,7 @@ const path = require("path");
 const BuildNotifierPlugin = require("webpack-build-notifier");
 const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
+const FriendlyErrorsWebpackPlugin = require("@nuxt/friendly-errors-webpack-plugin");
 const ImageminPlugin = require("imagemin-webpack-plugin").default;
 const LiveReloadPlugin = require("webpack-livereload-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -85,12 +85,16 @@ module.exports = (env, argv) => {
                 },
                 {
                     test: /\.(jpe?g|png|gif)$/i,
-                    loader: "url-loader",
-                    options: {
-                        limit: 8192,
-                        fallback: "file-loader",
-                        name: "img/[name].[ext]",
-                        esModule: false,
+                    type: "asset/resource",
+                    generator: {
+                        filename: "img/[name][ext][query]",
+                    },
+                },
+                {
+                    test: /\.(woff|woff2|eot|ttf|otf)$/i,
+                    type: "asset/resource",
+                    generator: {
+                        filename: "fonts/[name][ext][query]",
                     },
                 },
                 {
@@ -101,19 +105,12 @@ module.exports = (env, argv) => {
                             use: ["babel-loader", "vue-svg-loader"],
                         },
                         {
-                            loader: "url-loader",
-                            options: {
-                                limit: 8192,
-                                fallback: "file-loader",
-                                name: "img/[name].[ext]",
-                                esModule: false,
+                            type: "asset",
+                            generator: {
+                                filename: "img/[name][ext][query]",
                             },
                         },
                     ],
-                },
-                {
-                    test: /\.(woff|woff2|eot|ttf|otf)$/i,
-                    type: "asset/resource",
                 },
             ],
         },
