@@ -9,6 +9,7 @@ const LiveReloadPlugin = require("webpack-livereload-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const VueLoaderPlugin = require("vue-loader").VueLoaderPlugin;
 const WebpackManifestPlugin = require("webpack-manifest-plugin").WebpackManifestPlugin;
+const DefinePlugin = require("webpack").DefinePlugin;
 
 module.exports = (env, argv) => {
     const PUBLIC_PATH = "dist/";
@@ -26,7 +27,7 @@ module.exports = (env, argv) => {
             filename: "js/[name].js",
         },
 
-        performance: { hints: false, },
+        performance: { hints: false },
         devtool: MODE === "production" ? false : "source-map",
         stats: "none",
 
@@ -40,7 +41,6 @@ module.exports = (env, argv) => {
         resolve: {
             alias: {
                 "@": path.resolve(__dirname, "src"),
-                "vue$": "vue/dist/vue.esm.js",
             },
             extensions: [".wasm", ".mjs", ".js", ".json", ".vue"],
         },
@@ -73,11 +73,8 @@ module.exports = (env, argv) => {
                             loader: "postcss-loader",
                             options: {
                                 postcssOptions: {
-                                    plugins: [
-                                        "autoprefixer",
-                                        "cssnano",
-                                    ],
-                                }
+                                    plugins: ["autoprefixer", "cssnano"],
+                                },
                             },
                         },
                         "less-loader",
@@ -101,8 +98,8 @@ module.exports = (env, argv) => {
                     test: /\.svg$/,
                     oneOf: [
                         {
-                            resourceQuery: /inline/,
-                            use: ["babel-loader", "vue-svg-loader"],
+                            resourceQuery: /vue/,
+                            use: ["vue-loader", "@ifcanduela/vue-svg-loader", "svgo-loader"],
                         },
                         {
                             type: "asset",
@@ -121,13 +118,18 @@ module.exports = (env, argv) => {
                 suppressSuccess: true,
             }),
 
-            new CleanWebpackPlugin({cleanStaleWebpackAssets: false}),
+            new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
 
             // new CopyWebpackPlugin({
             //     patterns: [
             //         {from: "./assets/img/icons", to: "img/icons"},
             //     ]
             // }),
+
+            new DefinePlugin({
+                __VUE_OPTIONS_API__: true,
+                __VUE_PROD_DEVTOOLS__: false,
+            }),
 
             new FriendlyErrorsWebpackPlugin(),
 
